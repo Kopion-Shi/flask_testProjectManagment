@@ -2,7 +2,6 @@ import json
 from flask import Blueprint
 from flask import request
 
-import settings
 
 app_user=Blueprint("app_user",__name__)
 
