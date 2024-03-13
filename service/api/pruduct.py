@@ -4,7 +4,7 @@ from multiprocessing import connection
 import pymysql.cursors
 from flask import Blueprint, request
 
-app_product = Blueprint("app_product", __name__)
+app_product = Blueprint("app_product", __name__, url_prefix="/api/product")
 
 
 def connectDB():
@@ -18,7 +18,7 @@ def connectDB():
     return connection
 
 
-@app_product.route("/api/product/list", methods=["GET"])
+@app_product.route("/list", methods=["GET"])
 def product_list():
     connection = connectDB()
     # 硬编码返回list
@@ -32,7 +32,7 @@ def product_list():
     return resp_data
 
 
-@app_product.route("/api/product/create", methods=["POST"])
+@app_product.route("/create", methods=["POST"])
 def product_create():
     body = request.get_json()
     connection = connectDB()
@@ -54,7 +54,7 @@ def product_create():
     return resp_data
 
 
-@app_product.route("/api/product/update", methods=["POST"])
+@app_product.route("/update", methods=["POST"])
 def product_update():
     body = request.get_json()
     connection = connectDB()
@@ -78,7 +78,7 @@ def product_update():
 
 
 # [DELETE方法]根据id实际删除项目信息
-@app_product.route("/api/product/delete", methods=['DELETE'])
+@app_product.route("/delete", methods=['DELETE'])
 def product_delete():
     # 返回的reponse
     resp_data = {
@@ -103,7 +103,7 @@ def product_delete():
 
 
 # [POST方法]根据id更新状态项目状态，做软删除
-@app_product.route("/api/product/remove", methods=['POST'])
+@app_product.route("/remove", methods=['POST'])
 def product_remove():
     resp_data = {
         "code": 20000,
@@ -124,7 +124,7 @@ def product_remove():
 
 
 # 搜索接口
-@app_product.route("/api/product/search", methods=['GET'])
+@app_product.route("/search", methods=['GET'])
 def product_search():
     # 获取title和keyCode
     title = request.args.get('title')
@@ -156,5 +156,4 @@ def product_search():
         "code": 20000,
         "data": data
     }
-
     return resp_data

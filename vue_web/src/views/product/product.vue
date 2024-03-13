@@ -31,13 +31,14 @@
           <el-link icon="el-icon-delete" @click="pHardRemove(scope.row.id)">删除</el-link>
         </template>
       </el-table-column>
+
     </el-table>
 
     <!--对话框嵌套表，使用el-dialog-->
     <el-dialog :title="dialogProductStatus==='ADD'?'添加产品或项目':'修改产品或项目'" :visible.sync="dialogProductShow">
       <el-form :model="product">
         <el-form-item v-if="dialogProductStatus==='UPDATE'" label="编号" label-width="100px">
-          <el-input v-model="product.id" placeholder="请填写中文名称" style="width: 80%" />
+          <el-input v-model="product.id" placeholder="项目ID" disabled style="width: 80%" />
         </el-form-item>
         <el-form-item label="名称" label-width="100px">
           <el-input v-model="product.title" placeholder="请填写中文名称" style="width: 80%" />
