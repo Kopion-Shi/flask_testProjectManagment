@@ -4,3 +4,10 @@ resp_format_success = {
     "data": [],
     "total": 0
 }
+
+resp_format_failed = {
+    "code": 20001,
+    "message": "failed",
+    "data": [],
+    "total": 0
+}

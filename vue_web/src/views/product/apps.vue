@@ -3,17 +3,19 @@
     <div class="filter-container">
       <el-form :inline="true" :model="search">
         <el-form-item label="归属分类">
-          <el-select v-model="search.productId" filterable="true" clearable>
-            <el-option value="" label="所有" />
-            <el-option
-              v-for="item in options"
-              :key="item.id"
-              :label="item.title"
-              :value="item.id"
-            >
-              <span style="float: left">{{ item.keyCode }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.title }}</span>
-            </el-option>
+          <el-select v-model="search.productId" filterabl clearable>
+            <el-select v-model="search.productId" filterabl clearable>
+              <el-option value="" label="所有" />
+              <el-option
+                v-for="item in options"
+                :key="item.id"
+                :label="item.title"
+                :value="item.id"
+              >
+                <span style="float: left">{{ item.keyCode }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.title }}</span>
+              </el-option>
+            </el-select>
           </el-select>
         </el-form-item>
         <el-form-item label="应用ID">
@@ -106,7 +108,7 @@
               <el-input v-model="appInfo.producer" style="width: 300px" />
             </el-form-item>
             <el-form-item label="默认抄送">
-              <el-input v-model="appInfo.cCEmail" style="width: 300px" />
+              <el-input v-model="appInfo.CcEmail" style="width: 300px" />
             </el-form-item>
             <el-form-item label="代码地址">
               <el-input v-model="appInfo.gitCode" style="width: 300px" />
@@ -132,7 +134,7 @@
 
 <script>
 import moment from 'moment'
-import { apiAppsProduct, apiAppsSearch } from '@/api/apps'
+import { apiAppsProduct, apiAppsSearch, apiAppsCommit } from '@/api/apps'
 import store from '@/store'
 
 export default {
@@ -141,7 +143,7 @@ export default {
     return {
       op_user: store.getters.name,
       // 定义动作
-      appAction: 'ADD',
+      appAction: '',
       // 控制抽屉显示隐藏
       drawerVisible: false,
       // 添加/修改绑定的数据
@@ -153,7 +155,7 @@ export default {
         tester: '',
         developer: '',
         producer: '',
-        cCEmail: '',
+        CcEmail: '',
         gitCode: '',
         wiki: '',
         more: '',
@@ -215,7 +217,6 @@ export default {
       })
     },
     searchClick() {
-      console.log(this.search)
       apiAppsSearch(this.search).then(response => {
         // 将返回的结果赋值给表格自动匹配
         this.tableData = response.data
@@ -234,12 +235,61 @@ export default {
     },
     addApp() {
       this.drawerVisible = true
+      this.appAction = 'ADD'
+      this.appInfo.id = ''
+      this.appInfo.appId = ''
+      this.appInfo.productId = ''
+      this.appInfo.note = ''
+      this.appInfo.tester = ''
+      this.appInfo.developer = ''
+      this.appInfo.producer = ''
+      this.appInfo.CcEmail = ''
+      this.appInfo.gitCode = ''
+      this.appInfo.wiki = ''
+      this.appInfo.more = ''
+      this.appInfo.creteUser = ''
     },
-    updateApp() {
+    updateApp(row) {
+      console.log(row)
       this.drawerVisible = true
+      this.appAction = 'Update'
+      this.appInfo.id = row.id
+      this.appInfo.appId = row.appId
+      this.appInfo.productId = row.productId
+      this.appInfo.note = row.note
+      this.appInfo.tester = row.tester
+      this.appInfo.developer = row.developer
+      this.appInfo.producer = row.producer
+      this.appInfo.CcEmail = row.CcEmail
+      this.appInfo.gitCode = row.gitCode
+      this.appInfo.wiki = row.wiki
+      this.appInfo.more = row.more
+      this.appInfo.creteUser = ''
+    },
+    commitApp() {
+      // 上边form定义ref，验证通过if valid的方式判断
+      this.$refs['appInfo'].validate((valid) => {
+        if (valid) {
+          this.appInfo.updateUser = this.op_user
+          console.log(this.appInfo)
+          apiAppsCommit(this.appInfo).then(response => {
+            // 如果request.js没有拦截即表示成功，给出对应提示和操作
+            this.$notify({
+              title: '成功',
+              message: this.appAction === 'ADD' ? '应用添加成功' : '应用修改成功',
+              type: 'success'
+            })
+            // 关闭对话框
+            this.drawerVisible = false
+            // 重新查询刷新数据显示
+            this.searchClick()
+          })
+        } else {
+          return false
+        }
+      })
     }
   }
-
 }
 </script>
 

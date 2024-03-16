@@ -13,3 +13,11 @@ export function apiAppsProduct() {
     method: 'get'
   })
 }
+
+export function apiAppsCommit(requestBody) {
+  return request({
+    url: '/api/application/update',
+    method: 'post',
+    data: requestBody
+  })
+}
