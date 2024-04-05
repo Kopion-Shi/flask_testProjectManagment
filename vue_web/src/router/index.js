@@ -96,6 +96,12 @@ export const constantRoutes = [
       name: 'apps',
       component: () => import('@/views/product/apps.vue'),
       meta: { title: '服务应用管理', icon: 'dashboard' }
+    },
+    {
+      path: 'testmanager',
+      name: 'testmanager',
+      component: () => import('@/views/product/testmanager.vue'),
+      meta: { title: '测试管理', icon: 'dashboard' }
     }
     ]
   }
