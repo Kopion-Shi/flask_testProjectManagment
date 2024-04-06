@@ -193,7 +193,6 @@ def getTestInfo():
 
 
 @test_manager.route("/api/test/update", methods=['POST'])
-
 def updateReqeust():
 
     '''...请求值获取，返回值，参数判断部分省略....'''
@@ -380,4 +379,35 @@ def updateReqeust():
 
 
 
+    return resp_success
+
+
+@test_manager.route("/api/test/change", methods=['POST'])
+def changeStatus():
+
+    # 初始化返回对象
+    resp_success = format.resp_format_success
+    resp_failed = format.resp_format_failed
+    # 获取请求参数Body
+    reqbody = request.get_json()
+    if 'id' not in reqbody:
+        resp_failed['message'] = '提测ID不能为空'
+        return resp_failed
+    elif 'status' not in reqbody:
+        resp_failed['message'] = '更改的状态不能为空'
+        return resp_failed
+    # 重新链接数据库
+    with connection.cursor() as cursor:
+        # 判断状态流转的操作，如果status==start为开始测试，status==delete 软删除
+        if reqbody['status'] == 'start':
+            sql = "UPDATE `request` SET `status`=2 WHERE id=%s"
+            resp_success['message'] = '状态流转成功，进入测试阶段。'
+        elif reqbody['status'] == 'delete':
+            sql = "UPDATE `request` SET `isDel`=1 WHERE id=%s"
+            resp_success['message'] = '提测已被删除!'
+        else:
+            resp_failed.message = '状态标记错误'
+            return resp_failed
+        cursor.execute(sql, reqbody['id'])
+        connection.commit()
     return resp_success
