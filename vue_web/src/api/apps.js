@@ -21,3 +21,12 @@ export function apiAppsCommit(requestBody) {
     data: requestBody
   })
 }
+
+export function apiAppsIds(requestBody) {
+  return request({
+    url: '/api/application/options',
+    method: 'GET',
+    params: { requestBody },
+    data: requestBody
+  })
+}

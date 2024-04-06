@@ -9,10 +9,12 @@ from flask import request
 import pymysql.cursors
 import json
 
+from utils.email_tools import sendEmail
+
 # 使用数据库连接池的方式链接数据库，提高资源利用率
-pool = PooledDB(pymysql, mincached=2, maxcached=5, host=config.MYSQL_HOST, port=config.MYSQL_PORT,
+pool = PooledDB(pymysql, mincached=4, maxcached=10, host=config.MYSQL_HOST, port=config.MYSQL_PORT,
                 user=config.MYSQL_USER, passwd=config.MYSQL_PASSWORD, database=config.MYSQL_DATABASE,
-                cursorclass=pymysql.cursors.DictCursor)
+                cursorclass=pymysql.cursors.DictCursor,blocking=True)
 connection = pool.connection()
 test_manager = Blueprint("test_manager", __name__)
 
@@ -40,42 +42,41 @@ def searchBykey():
         sql = sql + " AND R.developer LIKE '%{}%'".format(body['developer'])
     if 'status' in body and body['status'] != '':
         sql = sql + " AND R.status = '{}'".format(body['status'])
-    if 'pickTime' in body and body['pickTime'] != '':
+    if 'pickTime' in body and body['pickTime']:
         sql = sql + " AND R.updateDate >= '{}' and R.updateDate <= '{}' ".format(body['pickTime'][0],
                                                                                  body['pickTime'][1])
 
     # 排序和页数拼接
     sql = sql + ' ORDER BY R.updateDate DESC LIMIT {},{}'.format((currentPage - 1) * pageSize, pageSize)
 
-    with connection:
+ 
         # 先查询总数
-        with connection.cursor() as cursor:
-            count_select = 'SELECT COUNT(*) as `count` FROM request as R , apps as A where R.appId = A.id AND R.isDel=0' + sql
-            # print(count_select)
-            cursor.execute(count_select)
-            total = cursor.fetchall()
+    print(sql)
+    with connection.cursor() as cursor:
+        count_select = 'SELECT COUNT(*) as `count` FROM request as R , apps as A where R.appId = A.id AND R.isDel=0' + sql
+        print(count_select)
+        cursor.execute(count_select)
+        total = cursor.fetchall()
 
-        # 执行查询
-        with connection.cursor() as cursor:
-            # 按照条件进行查询
-            data_select = 'SELECT A.appId,R.* FROM request as R , apps as A where R.appId = A.id AND R.isDel=0' + sql
-            # print(data_select)
-            cursor.execute(data_select)
-            data = cursor.fetchall()
+    # 执行查询
+    with connection.cursor() as cursor:
+        # 按照条件进行查询
+        data_select = 'SELECT A.appId,R.* FROM request as R , apps as A where R.appId = A.id AND R.isDel=0' + sql
+        # print(data_select)
+        cursor.execute(data_select)
+        data = cursor.fetchall()
 
     # 按分页模版返回查询数据
     response = format.resp_format_success
     response['data'] = data
     response['total'] = total[0]['count']
-    # print(response)
     return response
 
 
 @test_manager.route("/api/test/create", methods=['POST'])
 def createReqeust():
     # 获取传递的数据，并转换成JSON
-    body = request.get_data()
-    body = json.loads(body)
+    body = request.get_json()
 
     # 定义默认返回体
     resp_success = format.resp_format_success
@@ -128,10 +129,11 @@ def createReqeust():
             sendOk = 1
         else:
             sendOk = 2
+        print(body["appId"])
         with connection.cursor() as cursor:
             # 更新Emai是否发送成功1-成功 2-失败
             updateEmail = "UPDATE request SET sendEmail=%s, updateUser=%s,`updateDate`= NOW() WHERE id=%s"
-            cursor.execute(updateEmail, (sendOk, body["updateUser"], id))
+            cursor.execute(updateEmail, (sendOk, body["updateUser"], body["appId"]))
             # 提交修改邮件是否发送成功
             connection.commit()
     else:
@@ -139,22 +141,22 @@ def createReqeust():
     # 使用连接池链接数据库
 
     # 判断增加或是修改逻辑
-    with connection:
-        try:
-            with connection.cursor() as cursor:
-                # 拼接插入语句,并用参数化%s构造防止基本的SQL注入
-                # 其中id为自增，插入数据默认数据设置的当前时间
-                sqlInsert = "INSERT INTO request (title,appId,developer,tester,CcMail,verison,`type`,scope,gitCode,wiki,`more`,`status`,createUser,updateUser) " \
-                            "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlInsert, (
-                    body["title"], body["appId"], body["developer"], body["tester"], body["CcMail"], body["version"],
-                    body['type'],
-                    body["scope"], body["gitCode"], body["wiki"], body["more"], '1', body["createUser"],
-                    body["updateUser"]))
-                # 提交执行保存新增数据
-                id = cursor.lastrowid
-                connection.commit()
-            return resp_success
-        except Exception as err:
-            resp_failed['message'] = '提测失败了:' + err
-            return resp_failed
+
+    try:
+        with connection.cursor() as cursor:
+            # 拼接插入语句,并用参数化%s构造防止基本的SQL注入
+            # 其中id为自增，插入数据默认数据设置的当前时间
+            sqlInsert = "INSERT INTO request (title,appId,developer,tester,CcMail,verison,`type`,scope,gitCode,wiki,`more`,`status`,createUser,updateUser) " \
+                        "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlInsert, (
+                body["title"], body["appId"], body["developer"], body["tester"], body["CcMail"], body["version"],
+                body['type'],
+                body["scope"], body["gitCode"], body["wiki"], body["more"], '1', body["createUser"],
+                body["updateUser"]))
+            # 提交执行保存新增数据
+            id = cursor.lastrowid
+            connection.commit()
+        return resp_success
+    except Exception as err:
+        resp_failed['message'] = '提测失败了:' + err
+        return resp_failed

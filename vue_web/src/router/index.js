@@ -102,6 +102,12 @@ export const constantRoutes = [
       name: 'testmanager',
       component: () => import('@/views/product/testmanager.vue'),
       meta: { title: '测试管理', icon: 'dashboard' }
+    },
+    {
+      path: 'commit',
+      name: 'commit',
+      component: () => import('@/views/product/commit.vue'),
+      meta: { title: '需求提测', icon: 'dashboard' }
     }
     ]
   }

@@ -108,7 +108,7 @@ export default {
         developer: '',
         tester: '',
         status: '',
-        pickTime: ''
+        pickTime: null
       },
       // 范围日期组件的快捷选项配置
       pickerOptions: {
@@ -139,6 +139,12 @@ export default {
         currentPage: 1,
         total: 0
       }
+    }
+  },
+
+  mounted() {
+    if (this.$route.params.needUp && this.$route.params.needUp.needUp === 'true') {
+      this.searchClick()
     }
   },
   created() {
@@ -184,6 +190,9 @@ export default {
         default:
           return '未知状态'
       }
+    },
+    doCommit() {
+      this.$router.push({ name: 'commit', params: { action: 'ADD' }})
     },
 
     productList() {

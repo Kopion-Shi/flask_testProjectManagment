@@ -155,3 +155,27 @@ def product_update():
                 connection.commit()
 
         return resp_success
+
+@app_application.route("/options", methods=['GET'])
+def getOptionsForSelected():
+
+    value = request.args.get('value', '')
+    response = format.resp_format_success
+
+    connection = pool.connection()
+
+    with connection.cursor() as cursor:
+
+        # 先按appid模糊搜索，没有数据再按note搜索
+        sqlByAppId = "SELECT * FROM apps WHERE appId LIKE '%"+value+"%'"
+        cursor.execute(sqlByAppId)
+        dataByppId = cursor.fetchall()
+        if len(dataByppId) > 0 :
+            response['data'] = dataByppId
+        else:
+            sqlByNote = "SELECT * FROM apps WHERE note LIKE '%" + value + "%'"
+            cursor.execute(sqlByNote)
+            dataByNote = cursor.fetchall()
+            response['data'] = dataByNote
+
+    return response
