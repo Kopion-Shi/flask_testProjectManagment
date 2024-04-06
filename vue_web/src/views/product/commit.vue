@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
     <el-header>
-      <el-page-header :content="testAction ==='UPDATE'?'修改提测':'新建提测'" @back="goBack" />
+      <el-page-header @back="goBack"  :content="testAction ==='UPDATE'?'修改提测':'新建提测'" />
     </el-header>
     <el-main>
       <el-form ref="ruleForm" :model="requestForm" :rules="requestRules" label-width="100px">
         <el-form-item v-if="testAction==='UPDATE'" label="提测ID" prop="id">
-          <el-input v-model="requestForm.id" style="width: 350px;" disabled="" />
+          <el-input v-model="requestForm.id" style="width: 350px;" disabled=""></el-input>
         </el-form-item>
         <el-form-item label="提测标题" prop="title">
           <el-input v-model="requestForm.title" placeholder="提测标题" style="width: 350px" />
@@ -69,7 +69,7 @@
           <el-checkbox v-model="requestForm.isEmail" true-label="true">发送邮件</el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">{{ testAction=='ADD'?'立即创建':'修改提测' }}</el-button>
+          <el-button    type="primary" @click="onSubmit">{{testAction=='ADD'?'立即创建':'修改提测'}}</el-button>
           <el-button @click="onCancel">取 消</el-button>
         </el-form-item>
       </el-form>
@@ -79,7 +79,7 @@
 
 <script>
 import { apiAppsIds } from '@/api/apps'
-import { reqCreate, reqUpdate, apiTestInfo } from '@/api/test'
+import { reqCreate, reqUpdate, apiTestInfo} from '@/api/test'
 import { toThousandFilter } from '@/filters'
 import store from '@/store'
 
@@ -89,7 +89,7 @@ export default {
     return {
       op_user: store.getters.name,
       testAction: '',
-      testId: '',
+      testId:'',
       appIdloading: false,
       requestForm: {
         id: undefined,
@@ -135,11 +135,12 @@ export default {
   mounted() {
     if (this.$route.params.action) {
       this.testAction = this.$route.params.action
-    } else if (this.$route.query.action) {
-      this.testAction = this.$route.query.action
     }
-    if (this.$route.query.id) {
-      this.testId = this.$route.query.id
+    else if(this.$route.query.action){
+      this.testAction=this.$route.query.action
+    }
+    if(this.$route.query.id){
+      this.testId=this.$route.query.id
       this.getTestInfo()
     }
   },
@@ -203,7 +204,8 @@ export default {
               // 回到列表页面
               this.$router.push({ name: 'testmanager', params: { needUp: 'true' }})
             })
-          } else {
+          }
+         else {
             this.requestForm.updateUser = this.op_user
             reqUpdate(this.requestForm).then(response => {
               // 如果request.js没有拦截即表示成功，给出对应提示和操作
@@ -215,15 +217,16 @@ export default {
               // 回到列表页面
               this.$router.push({ name: 'testmanager', params: { needUp: 'true' }})
             })
-          }
-        }
+        }}
       })
     },
     onCancel() {
       this.$router.push('testmanager')
     },
     getTestInfo() {
+
       apiTestInfo(this.testId).then(response => {
+
         const data = response.data
 
         this.requestForm.id = data.id
@@ -257,10 +260,14 @@ export default {
         // this.requestForm.appId = data.appId
 
         setTimeout(() => {
+
           this.requestForm.appId = data.appId
+
         }, 300)
-      })
-    }
+
+})
+
+}
   }
 }
 </script>

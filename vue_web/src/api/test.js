@@ -30,3 +30,11 @@ export function reqUpdate(body) {
     data: body
   })
 }
+
+export function changeStatus(body) {
+  return request({
+    url: '/api/test/change',
+    method: 'post',
+    data: body
+  })
+}
