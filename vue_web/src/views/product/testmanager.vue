@@ -194,8 +194,8 @@ export default {
     doCommit() {
       this.$router.push({ name: 'commit', params: { action: 'ADD' }})
     },
-    doUpdate(row){
-      this.$router.push({path:'/settings/commit?action=UPDATE&id='+row.id})
+    doUpdate(row) {
+      this.$router.push({ path: '/settings/commit?action=UPDATE&id=' + row.id })
     },
     productList() {
       apiAppsProduct().then(resp => {

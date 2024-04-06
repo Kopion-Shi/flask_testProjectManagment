@@ -20,7 +20,7 @@ export function apiTestInfo(id) {
   return request({
     url: '/api/test/info',
     method: 'GET',
-    params:{id}
+    params: { id }
   })
 }
 export function reqUpdate(body) {
