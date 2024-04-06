@@ -16,3 +16,17 @@ export function reqCreate(requestBody) {
   })
 }
 
+export function apiTestInfo(id) {
+  return request({
+    url: '/api/test/info',
+    method: 'GET',
+    params:{id}
+  })
+}
+export function reqUpdate(body) {
+  return request({
+    url: '/api/test/update',
+    method: 'post',
+    data: body
+  })
+}
