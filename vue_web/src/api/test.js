@@ -8,21 +8,22 @@ export function apiTestSearch(requestBody) {
   })
 }
 
-export function reqCreate(requestBody) {
+export function reqCreate(body) {
   return request({
     url: '/api/test/create',
     method: 'post',
-    data: requestBody
+    data: body
   })
 }
 
 export function apiTestInfo(id) {
   return request({
     url: '/api/test/info',
-    method: 'GET',
+    method: 'get',
     params: { id }
   })
 }
+
 export function reqUpdate(body) {
   return request({
     url: '/api/test/update',
@@ -36,5 +37,21 @@ export function changeStatus(body) {
     url: '/api/test/change',
     method: 'post',
     data: body
+  })
+}
+
+export function reportSave(body) {
+  return request({
+    url: '/api/report/save',
+    method: 'post',
+    data: body
+  })
+}
+
+export function reportTestInfo(id) {
+  return request({
+    url: '/api/report/info',
+    method: 'get',
+    params: { id }
   })
 }

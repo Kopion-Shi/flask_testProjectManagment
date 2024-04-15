@@ -8,6 +8,7 @@ from api.testmanager import test_manager
 
 app = Flask(__name__, static_folder="static")
 CORS(app, supports_credentials=True)
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1000 * 1000
 app.register_blueprint(app_user)
 app.register_blueprint(app_product)
 app.register_blueprint(app_application)
