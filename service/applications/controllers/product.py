@@ -5,7 +5,7 @@ from flask import Blueprint
 import pymysql.cursors
 from flask import request
 import json
-from configs import config
+from config import config
 from dbutils.pooled_db import PooledDB
 
 '''

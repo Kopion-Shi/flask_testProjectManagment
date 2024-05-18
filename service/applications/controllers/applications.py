@@ -4,9 +4,9 @@ from dbutils.pooled_db import PooledDB
 import pymysql.cursors
 from flask import Blueprint, request
 
-from config import config
-from config import format
-
+from config import config,format
+from applications.exts import db
+from applications.models.products import ProductsModule
 app_application = Blueprint("app_application", __name__, url_prefix="/api/application")
 
 pool = PooledDB(pymysql, mincached=2, maxcached=5, host=config.MYSQL_HOST, port=config.MYSQL_PORT,
@@ -22,11 +22,17 @@ def get_products():
     """
     :return:返回分类数据
     """
-    conn = pool.connection()
-    with conn.cursor() as cursor:
-        sql = "SELECT `id` ,`keyCode`,`title` FROM products where `status`=0 order by `update` desc "
-        cursor.execute(sql)
-        data = cursor.fetchall()
+    # conn = pool.connection()
+    # with conn.cursor() as cursor:
+    #     sql = "SELECT `id` ,`keyCode`,`title` FROM products where `status`=0 order by `update` desc "
+    #     cursor.execute(sql)
+    #     data = cursor.fetchall()
+
+    data_table=db.session.query(ProductsModule.id,ProductsModule.keyCode,ProductsModule.title,).filter(ProductsModule.status==0).order_by(ProductsModule.update.desc()).all()
+    data=[{'id': item.id, 'keyCode': item.keyCode, 'title': item.title} for item in data_table]
+    print("++++++++++++++++++")
+    print(data_table)
+    print(data)
 
     response = format.resp_format_success
     response['data'] = data

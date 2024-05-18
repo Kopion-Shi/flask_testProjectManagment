@@ -3,7 +3,7 @@
 
 from flask import Blueprint
 from dbutils.pooled_db import PooledDB
-from configs import config, format
+from config import config, format
 
 from flask import request
 import pymysql.cursors
