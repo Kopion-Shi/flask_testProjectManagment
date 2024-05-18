@@ -3,18 +3,17 @@ from multiprocessing import connection
 
 import pymysql.cursors
 from flask import Blueprint, request
-
+from config import config
 app_product = Blueprint("app_product", __name__, url_prefix="/api/product")
 
 
 def connectDB():
-    connection = pymysql.connect(host='localhost',  # 数据库IP地址或链接域名
-                                 user='root',  # 设置的具有增改查权限的用户
-                                 password='root',  # 用户对应的密码
-                                 database='tpmstore',  # 数据表
-                                 charset='utf8mb4',  # 字符编码
-                                 cursorclass=pymysql.cursors.DictCursor)  # 结果作为字典返回游标
-    # 返回新的书库链接对象
+    connection = pymysql.connect(host=config.MYSQL_HOST,   # 数据库IP地址或链接域名
+                             user=config.MYSQL_USER,     # 设置的具有增改查权限的用户
+                             password=config.MYSQL_PASSWORD, # 用户对应的密码
+                             database=config.MYSQL_DATABASE,# 数据表
+                             charset='utf8mb4',  # 字符编码
+                             cursorclass=pymysql.cursors.DictCursor) # 结果作为字典返回游标
     return connection
 
 
@@ -23,7 +22,7 @@ def product_list():
     connection = connectDB()
     # 硬编码返回list
     with connection.cursor() as cursor:
-        sql = "select * from Products where status=0 ORDER BY 'UPDATE' DESC;"
+        sql = "select * from products where status=0 ORDER BY 'UPDATE' DESC;"
         cursor.execute(sql)
         data = cursor.fetchall()
     # 按返回模版格式进行json结果返回
@@ -147,7 +146,6 @@ def product_search():
     # 使用python的with..as控制流语句（相当于简化的try except finally）
     with connection.cursor() as cursor:
         # 按照条件进行查询
-        print(sql)
         cursor.execute(sql)
         data = cursor.fetchall()
 

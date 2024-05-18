@@ -16,3 +16,5 @@ EMAIL_HOST_USER = '1694348126@qq.com'
 EMAIL_HOST_PASSWORD = 'bdyaqmrjcfcpfcjj'
 # 收件人看到的发件人
 EMAIL_FROM = 'weblei<1694348126@qq.com>'
+SQLALCHEMY_DATABASE_URI=f"mysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DATABASE}?unix_socket=/var/run/mysqld/mysqld.sock"
+SQLALCHEMY_RECORD_QUERIES=False

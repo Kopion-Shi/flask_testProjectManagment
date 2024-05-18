@@ -51,10 +51,8 @@ def searchBykey():
 
  
         # 先查询总数
-    print(sql)
     with connection.cursor() as cursor:
         count_select = 'SELECT COUNT(*) as `count` FROM request as R , apps as A where R.appId = A.id AND R.isDel=0' + sql
-        print(count_select)
         cursor.execute(count_select)
         total = cursor.fetchall()
 
@@ -129,7 +127,6 @@ def createReqeust():
             sendOk = 1
         else:
             sendOk = 2
-        print(body["appId"])
         with connection.cursor() as cursor:
             # 更新Emai是否发送成功1-成功 2-失败
             updateEmail = "UPDATE request SET sendEmail=%s, updateUser=%s,`updateDate`= NOW() WHERE id=%s"
@@ -164,7 +161,6 @@ def createReqeust():
 
 @test_manager.route("/api/test/info", methods=['GET'])
 def getTestInfo():
-    print(request)
     test_id = request.args.get('id')
     resp_success = format.resp_format_success
     resp_failed = format.resp_format_failed
@@ -313,41 +309,41 @@ def changeStatus():
 import os
 # 涉及的相关依赖引用
 from wtforms import Form,FileField
-from flask_wtf.file import FileRequired,FileAllowed
+# from flask_wtf.file import FileRequired,FileAllowed
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import CombinedMultiDict
 # 表单提交相关校验
-class fileForm(Form):
-    file = FileField(validators=[FileRequired(), FileAllowed(['jpg', 'png', 'gif', 'pdf', 'zip'])])
+# class fileForm(Form):
+#     file = FileField(validators=[FileRequired(), FileAllowed(['jpg', 'png', 'gif', 'pdf', 'zip'])])
 
-@test_manager.route("/api/report/upload",methods=['POST'])
-def uploadFile():
-    # 初始化返回对象
-    resp_success = format.resp_format_success
-    resp_failed = format.resp_format_failed
+# @test_manager.route("/api/report/upload",methods=['POST'])
+# def uploadFile():
+#     # 初始化返回对象
+#     resp_success = format.resp_format_success
+#     resp_failed = format.resp_format_failed
 
-    file_form = fileForm(CombinedMultiDict([request.form, request.files]))
-    if file_form.validate():
-        # 获取项目路径+保存文件夹，组成服务保存绝对路径
-        save_path = os.path.join(os.path.abspath(os.path.dirname(__file__)).split('service')[0], 'service/static')
-        # 通过表单提交的form-data获取选择上传的文件
-        attfile = request.files.get('file')
-        # 进行安全名称检查处理
-        file_name = secure_filename(attfile.filename)
-        # 保存文件文件中
-        attfile.save(os.path.join(save_path, file_name))
+#     file_form = fileForm(CombinedMultiDict([request.form, request.files]))
+#     if file_form.validate():
+#         # 获取项目路径+保存文件夹，组成服务保存绝对路径
+#         save_path = os.path.join(os.path.abspath(os.path.dirname(__file__)).split('service')[0], 'service/static')
+#         # 通过表单提交的form-data获取选择上传的文件
+#         attfile = request.files.get('file')
+#         # 进行安全名称检查处理
+#         file_name = secure_filename(attfile.filename)
+#         # 保存文件文件中
+#         attfile.save(os.path.join(save_path, file_name))
 
-        resp_success['data'] = {"fileName": file_name}
-        return resp_success
-    else:
-        resp_failed['message'] = '文件格式不符合预期'
-        return resp_failed
+#         resp_success['data'] = {"fileName": file_name}
+#         return resp_success
+#     else:
+#         resp_failed['message'] = '文件格式不符合预期'
+#         return resp_failed
     
-from flask import send_from_directory
-@test_manager.route("/api/file/download",methods=['GET'])
-def downloadFile():
-    fimeName = request.args.get('name')
-    # 保存文件的相对路径
-    save_path = os.path.join(os.path.abspath(os.path.dirname(__file__)).split('service')[0], 'service/static')
-    result = send_from_directory(save_path, fimeName)
-    return  result
+# from flask import send_from_directory
+# @test_manager.route("/api/file/download",methods=['GET'])
+# def downloadFile():
+#     fimeName = request.args.get('name')
+#     # 保存文件的相对路径
+#     save_path = os.path.join(os.path.abspath(os.path.dirname(__file__)).split('service')[0], 'service/static')
+#     result = send_from_directory(save_path, fimeName)
+#     return  result

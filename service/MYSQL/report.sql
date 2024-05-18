@@ -10,7 +10,7 @@ DROP TABLE IF EXISTS `report`;
 
 
 CREATE TABLE `report`  (
-    `id`int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `id`int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `createDate` datetime NULL COMMENT '创建时间',
   `updataDate` datetime NULL COMMENT '更新时间',
   `updateUser` varchar(20) NULL COMMENT '修改人',

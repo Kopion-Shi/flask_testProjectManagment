@@ -98,7 +98,7 @@
           <el-descriptions-item label="提测版本">{{requestInfo.version}}</el-descriptions-item>
           <el-descriptions-item label="提测类型">{{formatInfoType(requestInfo.type)}}</el-descriptions-item>
           <el-descriptions-item label="应用ID" :span="2">{{requestInfo.appId}}</el-descriptions-item>
-          <el-descriptions-item label="提测说明" :span="2">{{requestInfo.scope}}</el-descriptions-item>
+          <el-descriptions-item label="提测说明" :span="2"> {{requestInfo.scope}}</el-descriptions-item>
           <el-descriptions-item label="代码地址" :span="2">{{requestInfo.gitCode}}</el-descriptions-item>
           <el-descriptions-item label="测试文档" :span="2">{{requestInfo.wiki}}</el-descriptions-item>
           <el-descriptions-item label="更多信息" :span="2">{{requestInfo.more}}</el-descriptions-item>

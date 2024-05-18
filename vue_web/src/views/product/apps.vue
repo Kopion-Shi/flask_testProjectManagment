@@ -279,6 +279,7 @@ export default {
       this.$refs['appInfo'].validate((valid) => {
         if (valid) {
           this.appInfo.updateUser = this.op_user
+          console.log(this.appInfo)
           apiAppsCommit(this.appInfo).then(response => {
             // 如果request.js没有拦截即表示成功，给出对应提示和操作
             this.$notify({
