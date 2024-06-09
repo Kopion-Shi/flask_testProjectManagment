@@ -4,33 +4,28 @@
       <el-form :inline="true" :model="search">
         <el-form-item label="归属分类">
           <el-select v-model="search.productId">
-            <el-option value="" label="所有" />
-            <el-option
-              v-for="item in options"
-              :key="item.id"
-              :label="item.title"
-              :value="item.id"
-            >
+            <el-option value="" label="所有"/>
+            <el-option v-for="item in options" :key="item.id" :label="item.title" :value="item.id">
               <span style="float: left">{{ item.keyCode }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.title }}</span>
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="应用ID">
-          <el-input v-model="search.appId" placeholder="服务ID关键词" style="width: 200px;" clearable />
+          <el-input v-model="search.appId" placeholder="服务ID关键词" style="width: 200px;" clearable/>
         </el-form-item>
         <el-form-item label="描 述">
-          <el-input v-model="search.note" placeholder="描述模糊搜索" style="width: 200px;" clearable />
+          <el-input v-model="search.note" placeholder="描述模糊搜索" style="width: 200px;" clearable/>
         </el-form-item>
         <br>
         <el-form-item label="研  发">
-          <el-input v-model="search.developer" placeholder="默认研发" style="width: 210px;" clearable />
+          <el-input v-model="search.developer" placeholder="默认研发" style="width: 210px;" clearable/>
         </el-form-item>
         <el-form-item label="产  品">
-          <el-input v-model="search.producer" placeholder="默认产品" style="width: 210px;" clearable />
+          <el-input v-model="search.producer" placeholder="默认产品" style="width: 210px;" clearable/>
         </el-form-item>
         <el-form-item label="测  试">
-          <el-input v-model="search.tester" placeholder="默认测试" style="width: 210px;" clearable />
+          <el-input v-model="search.tester" placeholder="默认测试" style="width: 210px;" clearable/>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" plain @click="searchClick()">搜索</el-button>
@@ -41,14 +36,14 @@
     <!--:data 绑定data()的数组值,会动态根据其变化而变化-->
     <el-table :data="tableData">
       <!--:data prop绑定{}中的key，label为自定义显示的列表头-->
-      <el-table-column prop="appId" label="应用ID" />
-      <el-table-column prop="note" label="描述" show-overflow-tooltip />
-      <el-table-column prop="title" label="归属分类" />
-      <el-table-column prop="developer" label="默认研发" />
-      <el-table-column prop="producer" label="默认产品" />
-      <el-table-column prop="tester" label="默认测试" />
-      <el-table-column prop="updateUser" label="更新人" />
-      <el-table-column :formatter="formatDate" prop="updateDate" label="更新时间" />
+      <el-table-column prop="appId" label="应用ID"/>
+      <el-table-column prop="note" label="描述" show-overflow-tooltip/>
+      <el-table-column prop="title" label="归属分类"/>
+      <el-table-column prop="developer" label="默认研发"/>
+      <el-table-column prop="producer" label="默认产品"/>
+      <el-table-column prop="tester" label="默认测试"/>
+      <el-table-column prop="updateUser" label="更新人"/>
+      <el-table-column :formatter="formatDate" prop="updateDate" label="更新时间"/>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-link icon="el-icon-edit" @click="updateApp(scope.row)">修改</el-link>
@@ -57,68 +52,53 @@
     </el-table>
     <br>
     <div>
-      <el-pagination
-        background
-        :current-page.sync="search.currentPage"
-        :page-size="search.pageSize"
-        layout="total, sizes, prev, pager, next"
-        :page-sizes="[5, 10, 20, 30, 50]"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      <el-pagination background :current-page.sync="search.currentPage" :page-size="search.pageSize"
+                     layout="total, sizes, prev, pager, next" :page-sizes="[5, 10, 20, 30, 50]" :total="total"
+                     @size-change="handleSizeChange" @current-change="handleCurrentChange"/>
     </div>
     <div>
-      <el-drawer
-        :title="appAction==='ADD'? '添加应用': '修改应用'"
-        :visible.sync="drawerVisible"
-        size="45%"
-        direction="rtl"
-      >
+      <el-drawer :title="appAction === 'ADD' ? '添加应用' : '修改应用'" :visible.sync="drawerVisible" size="45%"
+                 direction="rtl">
         <div>
           <el-form ref="appInfo" :model="appInfo" :rules="rules" label-width="120px">
             <el-form-item label="应用ID" prop="appId">
-              <el-input v-model="appInfo.appId" :disabled="appAction==='ADD'? false : true" style="width: 300px" />
+              <el-input v-model="appInfo.appId" :disabled="appAction === 'ADD' ? false : true" style="width: 300px"/>
             </el-form-item>
             <el-form-item label="归属分类" prop="productId">
               <el-select v-model="appInfo.productId" style="width: 300px">
-                <el-option
-                  v-for="item in options"
-                  :key="item.id"
-                  :label="item.title"
-                  :value="item.id">
+                <el-option v-for="item in options" :key="item.id" :label="item.title" :value="item.id">
                   <span style="float: left">{{ item.keyCode }}</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">{{ item.title }}</span>
                 </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="应用描述">
-              <el-input v-model="appInfo.note" style="width: 300px" />
+              <el-input v-model="appInfo.note" style="width: 300px"/>
             </el-form-item>
             <el-form-item label="测试负责" prop="tester">
-              <el-input v-model="appInfo.tester" style="width: 300px" />
+              <el-input v-model="appInfo.tester" style="width: 300px"/>
             </el-form-item>
             <el-form-item label="研发负责" prop="developer">
-              <el-input v-model="appInfo.developer" style="width: 300px" />
+              <el-input v-model="appInfo.developer" style="width: 300px"/>
             </el-form-item>
             <el-form-item label="产品负责" prop="producer">
-              <el-input v-model="appInfo.producer" style="width: 300px" />
+              <el-input v-model="appInfo.producer" style="width: 300px"/>
             </el-form-item>
-            <el-form-item label="默认抄送">
-              <el-input v-model="appInfo.cCEmail" style="width: 300px" />
+            <el-form-item label="默认抄送" prop="cCEmail">
+              <el-input v-model="appInfo.cCEmail" style="width: 300px"/>
             </el-form-item>
-            <el-form-item label="代码地址">
-              <el-input v-model="appInfo.gitCode" style="width: 300px" />
+            <el-form-item label="代码地址" prop="gitCode">
+              <el-input v-model="appInfo.gitCode" style="width: 300px"/>
             </el-form-item>
-            <el-form-item label="相关wiki">
-              <el-input v-model="appInfo.wiki" style="width: 300px" />
+            <el-form-item label="相关wiki" prop="wiki">
+              <el-input v-model="appInfo.wiki" style="width: 300px"/>
             </el-form-item>
-            <el-form-item label="更多信息">
-              <el-input v-model="appInfo.more" style="width: 300px" />
+            <el-form-item label="更多信息" prop="more">
+              <el-input v-model="appInfo.more" style="width: 300px"/>
             </el-form-item>
             <el-form-item>
               <span class="dialog-footer">
-                <el-button @click="drawerVisible=false">取 消</el-button>
+                <el-button @click="drawerVisible = false">取 消</el-button>
                 <el-button type="primary" @click="commitApp('appInfo')">提 交</el-button>
               </span>
             </el-form-item>
@@ -132,7 +112,7 @@
 <script>
 import moment from 'moment'
 import store from '@/store'
-import { apiAppsProduct, apiAppsSearch, apiAppsCommit } from '@/api/apps'
+import {apiAppsProduct, apiAppsSearch, apiAppsCommit} from '@/api/apps'
 
 export default {
   name: 'Apps',
@@ -172,19 +152,19 @@ export default {
       },
       rules: {
         appId: [
-          { required: true, message: '请输应用名称', trigger: 'blur' }
+          {required: true, message: '请输应用名称', trigger: 'blur'}
         ],
         productId: [
-          { required: true, message: '请选择所属范围', trigger: 'change' }
+          {required: true, message: '请选择所属范围', trigger: 'change'}
         ],
         tester: [
-          { required: true, message: '请输入测试负责人', trigger: 'blur' }
+          {required: true, message: '请输入测试负责人', trigger: 'blur'}
         ],
         developer: [
-          { required: true, message: '请输入开发负责人', trigger: 'blur' }
+          {required: true, message: '请输入开发负责人', trigger: 'blur'}
         ],
         producer: [
-          { required: true, message: '请输入产品负责人', trigger: 'blur' }
+          {required: true, message: '请输入产品负责人', trigger: 'blur'}
         ]
       }
     }
@@ -271,14 +251,16 @@ export default {
       this.appInfo.gitCode = row.gitCode
       this.appInfo.wiki = row.wiki
       this.appInfo.more = row.more
-      this.appInfo.creteUser = ''
+      this.appInfo.creteUser = row.creteUser
       this.appInfo.updateUser = row.updateUser
     },
+
     commitApp() {
       // 上边form定义ref，验证通过if valid的方式判断
       this.$refs['appInfo'].validate((valid) => {
         if (valid) {
           this.appInfo.updateUser = this.op_user
+          this.setNullIfUndefined(this.appInfo);
           console.log(this.appInfo)
           apiAppsCommit(this.appInfo).then(response => {
             // 如果request.js没有拦截即表示成功，给出对应提示和操作
@@ -290,19 +272,31 @@ export default {
             // 关闭对话框
             this.drawerVisible = false
             // 重新查询刷新数据显示
-            this.getProductList()
+            this.ProductList()
           })
         } else {
           return false
         }
       })
+    },
+    setNullIfUndefined(obj) {
+      for (let key in obj) {
+        if (obj.hasOwnProperty(key) && obj[key] === undefined) {
+          obj[key] = null;
+        }
+
+        // 如果属性也是对象，递归处理
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+          this.setNullIfUndefined(obj[key]);
+        }
+      }
     }
   }
 }
 </script>
 
 <style scoped>
-  .el-pagination {
-    text-align: right;
-  }
+.el-pagination {
+  text-align: right;
+}
 </style>

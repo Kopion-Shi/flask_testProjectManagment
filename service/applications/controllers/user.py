@@ -1,26 +1,31 @@
 import json
 from flask import Blueprint
 from flask import request
+from flask_security import LoginForm
 
+app_user=Blueprint("app_user",__name__,url_prefix='/api/user/')
 
-app_user=Blueprint("app_user",__name__)
-
-
-@app_user.route("/api/user/login", methods=["POST"])
+@app_user.route("login", methods=["POST"])
 def login():
-    data = request.get_data()
-    js_data = json.loads(data)
+    form = LoginForm()
+    if form.validate_on_submit():
+        # Login and validate the user.
+        # user should be an instance of your `User` class
+        login_user(user)
 
-    if "username" in js_data and js_data["username"] == "admin":
-        result = {"code": 20000, "data": {"token": "admin-token"}}
+        flask.flash('Logged in successfully.')
 
-    else:
-        result = {"code": 60204, "message": "账号密码错误，请检查"}
+        next = flask.request.args.get('next')
+        # next_is_valid should check if the user has valid
+        # permission to access the `next` url
+        if not next_is_valid(next):
+            return flask.abort(400)
 
-    return result
+        return flask.redirect(next or flask.url_for('index'))
+    return flask.render_template('login.html', form=form)
 
 
-@app_user.route("/api/user/info", methods=["GET"])
+@app_user.route("info", methods=["GET"])
 def info():
     # 获取GET中请求token参数值
     token = request.args.get("token")

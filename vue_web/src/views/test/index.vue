@@ -4,7 +4,7 @@
       <el-form :inline="true" :model="search">
         <el-form-item label="归属分类">
           <el-select v-model="search.productId">
-            <el-option value="" label="所有" />
+            <el-option value="" label="所有"/>
             <el-option
               v-for="item in optsProduct"
               :key="item.id"
@@ -14,13 +14,13 @@
           </el-select>
         </el-form-item>
         <el-form-item label="应用ID">
-          <el-input v-model="search.appId" placeholder="服务ID关键词" style="width: 200px;" clearable />
+          <el-input v-model="search.appId" placeholder="服务ID关键词" style="width: 200px;" clearable/>
         </el-form-item>
         <el-form-item label="测试人">
-          <el-input v-model="search.tester" placeholder="默认测试" style="width: 210px;" clearable />
+          <el-input v-model="search.tester" placeholder="默认测试" style="width: 210px;" clearable/>
         </el-form-item>
         <el-form-item label="提测人">
-          <el-input v-model="search.developer" placeholder="默认测试" style="width: 210px;" clearable />
+          <el-input v-model="search.developer" placeholder="默认测试" style="width: 210px;" clearable/>
         </el-form-item>
         <el-form-item label="时间范围">
           <el-date-picker
@@ -35,12 +35,12 @@
         </el-form-item>
         <el-form-item label="测试状态">
           <el-select v-model="search.status" placeholder="请选择">
-            <el-option value="" label="所有" />
-            <el-option key="1" label="已提测" value="1" />
-            <el-option key="2" label="测试中" value="2" />
-            <el-option key="3" label="通过" value="3" />
-            <el-option key="4" label="失败" value="4" />
-            <el-option key="9" label="废弃" value="9" />
+            <el-option value="" label="所有"/>
+            <el-option key="1" label="已提测" value="1"/>
+            <el-option key="2" label="测试中" value="2"/>
+            <el-option key="3" label="通过" value="3"/>
+            <el-option key="4" label="失败" value="4"/>
+            <el-option key="9" label="废弃" value="9"/>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -52,26 +52,31 @@
     <div>
       <el-table :data="testData" v-loading="loading">
         <!--:data prop绑定{}中的key，label为自定义显示的列表头-->
-        <el-table-column prop="appId" label="应用ID" />
-        <el-table-column prop="title" label="提测标题" show-overflow-tooltip />
-        <el-table-column :formatter="formatStatus" prop="status" label="测试状态" />
-        <el-table-column :formatter="formatType" prop="type" label="类型" />
-        <el-table-column prop="developer" label="提测人" />
-        <el-table-column prop="tester" label="测试人" />
-        <el-table-column prop="updateUser" label="更新人" />
-        <el-table-column :formatter="formatDate" prop="updateDate" label="更新时间" />
+        <el-table-column prop="appId" label="应用ID"/>
+        <el-table-column prop="title" label="提测标题" show-overflow-tooltip/>
+        <el-table-column :formatter="formatStatus" prop="status" label="测试状态"/>
+        <el-table-column :formatter="formatType" prop="type" label="类型"/>
+        <el-table-column prop="developer" label="提测人"/>
+        <el-table-column prop="tester" label="测试人"/>
+        <el-table-column prop="updateUser" label="更新人"/>
+        <el-table-column :formatter="formatDate" prop="updateDate" label="更新时间"/>
         <el-table-column label="操作" width="300">
           <template slot-scope="scope">
             <!--<label>菜单逻辑判断一列</label>-->
             <el-link v-if="scope.row.status===1" type="primary" @click="startTest(scope.row)">开始测试</el-link>
             <el-link v-if="scope.row.status===2" type="primary" @click="doReport(scope.row)">添加结果</el-link>
-            <el-link v-if="scope.row.status===3 || scope.row.status == 4" type="primary" @click="showReportInfo(scope.row)">查看报告</el-link>
+            <el-link v-if="scope.row.status===3 || scope.row.status == 4" type="primary"
+                     @click="showReportInfo(scope.row)">查看报告
+            </el-link>
             <el-link v-if="scope.row.status===9" type="primary" @click="deleteTest(scope.row)">删除结果</el-link>
             <!--<label>菜单逻辑判断二列</label>-->
-            <el-divider direction="vertical" />
-            <el-link v-if="[1,2].includes(scope.row.status)" type="primary" @click="doUpdate(scope.row)">编辑提测</el-link>
-            <el-link v-if="[3,4,9].includes(scope.row.status)" type="primary" @click="updateReport(scope.row)">编辑结果</el-link>
-            <el-divider direction="vertical" />
+            <el-divider direction="vertical"/>
+            <el-link v-if="[1,2].includes(scope.row.status)" type="primary" @click="doUpdate(scope.row)">编辑提测
+            </el-link>
+            <el-link v-if="[3,4,9].includes(scope.row.status)" type="primary" @click="updateReport(scope.row)">
+              编辑结果
+            </el-link>
+            <el-divider direction="vertical"/>
             <el-link type="primary" @click="showRequestInfo(scope.row)">提测详情</el-link>
           </template>
         </el-table-column>
@@ -93,31 +98,35 @@
     <div>
       <el-dialog :title="requestInfo.title" :visible.sync="requestInfoVisible">
         <el-descriptions :column="2" border>
-          <el-descriptions-item label="提测人">{{requestInfo.developer}}</el-descriptions-item>
-          <el-descriptions-item label="测试人">{{requestInfo.tester}}</el-descriptions-item>
-          <el-descriptions-item label="提测版本">{{requestInfo.version}}</el-descriptions-item>
-          <el-descriptions-item label="提测类型">{{formatInfoType(requestInfo.type)}}</el-descriptions-item>
-          <el-descriptions-item label="应用ID" :span="2">{{requestInfo.appId}}</el-descriptions-item>
-          <el-descriptions-item label="提测说明" :span="2"> {{requestInfo.scope}}</el-descriptions-item>
-          <el-descriptions-item label="代码地址" :span="2">{{requestInfo.gitCode}}</el-descriptions-item>
-          <el-descriptions-item label="测试文档" :span="2">{{requestInfo.wiki}}</el-descriptions-item>
-          <el-descriptions-item label="更多信息" :span="2">{{requestInfo.more}}</el-descriptions-item>
+          <el-descriptions-item label="提测人">{{ requestInfo.developer }}</el-descriptions-item>
+          <el-descriptions-item label="测试人">{{ requestInfo.tester }}</el-descriptions-item>
+          <el-descriptions-item label="提测版本">{{ requestInfo.version }}</el-descriptions-item>
+          <el-descriptions-item label="提测类型">{{ formatInfoType(requestInfo.type) }}</el-descriptions-item>
+          <el-descriptions-item label="应用ID" :span="2">{{ requestInfo.appId }}</el-descriptions-item>
+          <el-descriptions-item label="提测说明" :span="2"> {{ requestInfo.scope }}</el-descriptions-item>
+          <el-descriptions-item label="代码地址" :span="2">{{ requestInfo.gitCode }}</el-descriptions-item>
+          <el-descriptions-item label="测试文档" :span="2">{{ requestInfo.wiki }}</el-descriptions-item>
+          <el-descriptions-item label="更多信息" :span="2">{{ requestInfo.more }}</el-descriptions-item>
         </el-descriptions>
       </el-dialog>
     </div>
     <div>
       <el-dialog :title="'[测试报告]' + reportInfo.title" :visible.sync="reportInfoVisible">
         <el-descriptions :column="1" border>
-          <el-descriptions-item label="测试结果">{{formatReportInfoStatus(reportInfo.status)}}</el-descriptions-item>
-          <el-descriptions-item label="测试结论">{{reportInfo.test_desc}}</el-descriptions-item>
-          <el-descriptions-item label="风险提示">{{reportInfo.test_risks}}</el-descriptions-item>
-          <el-descriptions-item label="测试内容">{{reportInfo.test_cases}}</el-descriptions-item>
-          <el-descriptions-item label="发现缺陷">{{reportInfo.test_bugs}}</el-descriptions-item>
+          <el-descriptions-item label="测试结果">{{ formatReportInfoStatus(reportInfo.status) }}</el-descriptions-item>
+          <el-descriptions-item label="测试结论">{{ reportInfo.test_desc }}</el-descriptions-item>
+          <el-descriptions-item label="风险提示">{{ reportInfo.test_risks }}</el-descriptions-item>
+          <el-descriptions-item label="测试内容">{{ reportInfo.test_cases }}</el-descriptions-item>
+          <el-descriptions-item label="发现缺陷">{{ reportInfo.test_bugs }}</el-descriptions-item>
           <el-descriptions-item v-if="reportInfo.test_file !==''" label="附件">
-            <a :href="'http://127.0.0.1:5000/api/file/download?name='+reportInfo.test_file">{{reportInfo.test_file}}</a>
+            <a
+              :href="'http://127.0.0.1:5000/api/file/download?name='+reportInfo.test_file">{{
+                reportInfo.test_file
+              }}</a>
           </el-descriptions-item>
-          <el-descriptions-item label="备注">{{reportInfo.test_note}}</el-descriptions-item>
-          <el-descriptions-item label="已发邮件">{{reportInfo.test_email===1?'已发送':'未发送或失败'}}</el-descriptions-item>
+          <el-descriptions-item label="备注">{{ reportInfo.test_note }}</el-descriptions-item>
+          <el-descriptions-item label="已发邮件">{{ reportInfo.test_email === 1 ? '已发送' : '未发送或失败' }}
+          </el-descriptions-item>
         </el-descriptions>
       </el-dialog>
     </div>
@@ -125,8 +134,8 @@
 </template>
 
 <script>
-import { apiAppsProduct } from '@/api/apps'
-import { apiTestSearch, changeStatus } from '@/api/test.js'
+import {apiAppsProduct} from '@/api/apps'
+import {apiTestSearch, changeStatus} from '@/api/test.js'
 import moment from 'moment'
 
 export default {
@@ -259,10 +268,10 @@ export default {
       this.searchClick()
     },
     doCommit(row) {
-      this.$router.push({ path: '/commit?action=ADD' })
+      this.$router.push({path: '/commit?action=ADD'})
     },
     doUpdate(row) {
-      this.$router.push({ path: '/commit?action=UPDATE&id=' + row.id })
+      this.$router.push({path: '/commit?action=UPDATE&id=' + row.id})
     },
     startTest(row) {
       const reqBody = {
@@ -307,10 +316,10 @@ export default {
       }
     },
     doReport(row) {
-      this.$router.push({ name: 'report', params: { action: 'ADD', id: row.id }})
+      this.$router.push({name: 'report', params: {action: 'ADD', id: row.id}})
     },
     updateReport(row) {
-      this.$router.push({ name: 'report', params: { action: 'UPDATE', id: row.id }})
+      this.$router.push({name: 'report', params: {action: 'UPDATE', id: row.id}})
     },
     showReportInfo(row) {
       this.reportInfo = row
@@ -330,7 +339,7 @@ export default {
 </script>
 
 <style scoped>
-  .el-pagination {
-    text-align: right;
-  }
+.el-pagination {
+  text-align: right;
+}
 </style>
