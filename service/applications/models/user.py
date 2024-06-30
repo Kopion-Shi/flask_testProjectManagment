@@ -1,19 +1,15 @@
-from flask_login import UserMixin  # 引入用户基类
-from service.applications.exts import db_mg
-from flask_security import Security, MongoEngineUserDatastore, \
-    UserMixin, RoleMixin, login_required
-
-db = db_mg
+from flask_login import UserMixin
+from applications.exts import sqlAlchemy_db as db
 
 
-class Role(db.Document, RoleMixin):
-    name = db.StringField(max_length=80, unique=True)
-    description = db.StringField(max_length=255)
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
 
+    def __init__(self, id, username, ):
+        self.id = id
+        self.username = username
 
-class User(db.Document, UserMixin):
-    email = db.StringField(max_length=255)
-    password = db.StringField(max_length=255)
-    active = db.BooleanField(default=True)
-    confirmed_at = db.DateTimeField()
-    roles = db.ListField(db.ReferenceField(Role), default=[])
+    def __repr__(self):
+        return '<User %r>' % self.username

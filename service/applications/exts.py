@@ -1,11 +1,10 @@
+from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
+from flask_security import Security
 
-from flask_mongoengine import MongoEngine
-from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin
-db: SQLAlchemy = SQLAlchemy()
-db_mg: MongoEngine = MongoEngine()
+sqlAlchemy_db: SQLAlchemy = SQLAlchemy()
+
+security: Security = Security()
 jwt: JWTManager = JWTManager()
-
-
-security = Security()
+login_manager = LoginManager()

@@ -3,6 +3,8 @@
 
 from flask import Blueprint
 from dbutils.pooled_db import PooledDB
+from flask_login import login_required,current_user
+
 from config import config, format
 
 from flask import request
@@ -19,8 +21,10 @@ connection = pool.connection()
 test_manager = Blueprint("test_manager", __name__)
 
 
+
 @test_manager.route("/api/test/search", methods=['POST'])
 def searchBykey():
+    print(current_user.is_authenticated)
     body = request.get_data()
     body = json.loads(body)
 

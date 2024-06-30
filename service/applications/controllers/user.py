@@ -1,47 +1,64 @@
-import json
-from flask import Blueprint
+from flask import Blueprint, jsonify
 from flask import request
-from flask_security import LoginForm
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from flask_login import login_required, login_user, logout_user, current_user
+from applications.exts import sqlAlchemy_db as db
+from applications.exts import login_manager
+from service.applications.models.user import User
 
-app_user=Blueprint("app_user",__name__,url_prefix='/api/user/')
+app_user = Blueprint("app_user", __name__, url_prefix='/api/user/')
+
+
+@login_manager.user_loader
+def user_loader(userid):
+    # 这里应该是从数据库或其他地方根据 user_id 加载用户的代码
+    return User.query.get(int(userid))
+
+
+@login_manager.request_loader
+@jwt_required()
+def load_user_from_request(request):
+    api_key = request.headers.get('Authorization')
+    userid = get_jwt_identity()
+    user = User.query.get(int(userid))
+    if api_key:
+        if user:
+            return user
+        else:
+            print("is exception !!!! error_msg")
+            return None
+
 
 @app_user.route("login", methods=["POST"])
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        # Login and validate the user.
-        # user should be an instance of your `User` class
-        login_user(user)
-
-        flask.flash('Logged in successfully.')
-
-        next = flask.request.args.get('next')
-        # next_is_valid should check if the user has valid
-        # permission to access the `next` url
-        if not next_is_valid(next):
-            return flask.abort(400)
-
-        return flask.redirect(next or flask.url_for('index'))
-    return flask.render_template('login.html', form=form)
-
-
-@app_user.route("info", methods=["GET"])
-def info():
-    # 获取GET中请求token参数值
-    token = request.args.get("token")
-    if token == "admin-token":
-
-        # basedir一般是在配置文件中
-        result_success = {
-            "code": 20000,
-            "data": {
-                "roles": ["admin"],
-                "introduction": "I am a super administrator",
-                "avatar": request.host_url + "static/avatar/1.gif",
-                "name": "Super Admin",
-            },
-        }
-        return result_success
+    username = request.json.get('username')
+    password = request.json.get('password')
+    user = db.session.query(User).filter_by(username=username).first()
+    if user and user.password_hash == password:
+        login_user(user, remember=True)
+        access_token = create_access_token(user.id)
+        return jsonify({"code": 20000, "data": {"token": access_token}})
     else:
-        result_error = {"code": 60204, "message": "用户信息获取错误"}
-        return result_error
+        return jsonify({"code": 60204, "message": "账号密码错误，请检查"})
+
+
+@app_user.route("/info", methods=["POST", "GET"])
+@login_required
+def info():
+    result_success = {
+        "code": 20000,
+        "data": {
+            "roles": ["admin"],
+            "introduction": "I am a super administrator",
+            "avatar": request.host_url + "static/avatar/1.gif",
+            "name": "Super Admin",
+        },
+    }
+    return jsonify(result_success)
+
+
+@app_user.route('/logout',methods=["POST"])
+@login_required
+def logout():
+    logout_user()
+    return jsonify({"code": 20000, "message": "Logout successful"})

@@ -1,4 +1,4 @@
-from applications.exts import db
+from applications.exts import sqlAlchemy_db as db
 from sqlalchemy import func
 from sqlalchemy.schema import UniqueConstraint  
 class AppsModel(db.Model):

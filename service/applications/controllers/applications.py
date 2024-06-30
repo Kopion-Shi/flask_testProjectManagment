@@ -5,7 +5,7 @@ import pymysql.cursors
 from flask import Blueprint, request
 
 from config import config, format
-from applications.exts import db
+from applications.exts import sqlAlchemy_db as db
 from applications.models.products import ProductsModule
 from applications.models.apps import AppsModel
 from sqlalchemy import func, and_
@@ -150,7 +150,7 @@ def product_update():
             }
         )
         db.session.commit()
-        resp_success["data"]=f"{body['productId']}更新成功"
+        resp_success["data"] = f"{body['productId']}更新成功"
     else:
         # 新增需要判断appId是否重复
         result = (
@@ -181,23 +181,19 @@ def product_update():
         # 提交执行保存新增数据
         db.session.add(add_app)
         db.session.commit()
-        resp_success["data"]=f"{body['productId']}创建成功"
+        resp_success["data"] = f"{body['productId']}创建成功"
     return resp_success
 
 
 @app_application.route("/options", methods=["GET"])
 def getOptionsForSelected():
-
     value = request.args.get("value", "")
     response = format.resp_format_success
 
-
-
-        # 先按appid模糊搜索，没有数据再按note搜索
+    # 先按appid模糊搜索，没有数据再按note搜索
     sqlByAppId = "SELECT * FROM apps WHERE appId LIKE '%" + value + "%'"
-    query_appId=db.session.query(AppsModel).filter(AppsModel.appId.like(f'%{value}%') ).all()
-    query_note=db.session.query(AppsModel).filter(AppsModel.note.like(f'%{value}%') ).all()
-    print(query_appId,query_note)
-        
+    query_appId = db.session.query(AppsModel).filter(AppsModel.appId.like(f'%{value}%')).all()
+    query_note = db.session.query(AppsModel).filter(AppsModel.note.like(f'%{value}%')).all()
+    print(query_appId, query_note)
 
     return response
