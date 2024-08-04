@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
-from applications.exts import sqlAlchemy_db, login_manager,jwt
+from applications.exts import sqlAlchemy_db, login_manager,jwt,admin,db_mongo
 from applications.controllers.product import app_product
 from applications.controllers.user import app_user
 from applications.controllers.dashboard import test_dashboard
@@ -14,10 +14,10 @@ app.config.from_object(config)
 
 CORS(app, supports_credentials=True)
 sqlAlchemy_db.init_app(app=app)
-
+db_mongo.init_app(app=app)
 jwt.init_app(app=app)
 login_manager.init_app(app=app)
-
+admin.init_app(app=app)
 app.register_blueprint(app_user)
 app.register_blueprint(app_product)
 app.register_blueprint(test_dashboard)

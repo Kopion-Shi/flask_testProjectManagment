@@ -5,7 +5,7 @@
   "author": "DaQi <zyueqi@qq.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider vue-cli-service serve --open",
+    "dev": "SET NODE_OPTIONS=--openssl-legacy-provider &&vue-cli-service serve",
     "build:prod": "vue-cli-service build",
     "build:stage": "vue-cli-service build --mode staging",
     "previnew": "node build/index.js --preview",
